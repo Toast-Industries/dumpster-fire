@@ -6,12 +6,13 @@
 #include "elapsedMillis.h"
 #include "Particle.h"
 #include "softap_http.h"
+#include "neopixel.h"
 
 void myPage(const char* url, ResponseCallback* cb, void* cbArg, Reader* body, Writer* result, void* reserved);
 void setup();
 void loop();
 int flameLight(String flameOn);
-#line 5 "c:/Users/hanzo/code/dumpster-fire/src/dumpster-fire.ino"
+#line 6 "c:/Users/hanzo/code/dumpster-fire/src/dumpster-fire.ino"
 struct Page
 {
     const char* url;
@@ -84,25 +85,26 @@ STARTUP(softap_set_application_page_handler(myPage, nullptr));
 
 // Press SETUP for 3 seconds to make the Photon enter Listening mode
 // Navigate to http://192.168.0.1 to setup Wi-Fi
+// Below is the normal operating code
+int brightness = 128;
 
-// Include the rest of your application below,
-// including your setup and loop functions
+#define PIXEL_PIN D3
+#define PIXEL_COUNT 18 // groups of "flames"
+#define PIXEL_TYPE WS2812B
 
-int led1 = D0; 
-int led2 = D1;
-int led3 = D2;
+Adafruit_NeoPixel strip(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE);
 
 void setup() {
-    pinMode(led1, OUTPUT);
-    pinMode(led2, OUTPUT);
-    pinMode(led3, OUTPUT);
-    Particle.function("flame", flameLight);
+  strip.begin();
+  strip.setBrightness(brightness);
+  strip.show(); // Initialize all pixels to 'off'
+  Particle.function("flame", flameLight);
 }
 
-void loop(){
- // doing nothing, forever
+void loop()
+{
+  // do nothing, forever
 }
-
 
 int flameLight(String flameOn)
 {
@@ -110,16 +112,49 @@ int flameLight(String flameOn)
   {
     elapsedMillis timeElapsed;
     unsigned int interval = 10000; //duration * 1s
-    while(timeElapsed < interval){
-        analogWrite(led1, random(120)+135);
-        analogWrite(led2, random(120)+135);
-        analogWrite(led3, random(120)+135);
-        delay(random(100));
+    while(timeElapsed < interval)
+    {
+      //  Regular (orange) flame:
+      int r = 226, g = 121, b = 35;
+
+      //  Purple flame:
+      //  int r = 158, g = 8, b = 148;
+
+      //  Green flame:
+      //int r = 74, g = 150, b = 12;
+
+      //  Flicker, based on our initial RGB values
+      for(int i=0; i<strip.numPixels(); i++) 
+      {
+        int flicker = random(0,55);
+        int r1 = r-flicker;
+        int g1 = g-flicker;
+        int b1 = b-flicker;
+        if(g1<0) g1=0;
+        if(r1<0) r1=0;
+        if(b1<0) b1=0;
+        strip.setPixelColor(i,r1,g1, b1);
+      }
+      strip.show();
+
+      //  Adjust the delay here, if you'd like.  Right now, it randomizes the 
+      //  color switch delay to give a sense of realism
+      delay(random(10,113));    
     }
-    analogWrite(led1, 0);
-    analogWrite(led2, 0);
-    analogWrite(led3, 0);
+    for(int i=0; i<strip.numPixels(); i++) 
+      {
+        strip.setPixelColor(i,0,0, 0);
+      }
+      strip.show();
+
+    //clear pixels?
     return 1;
+    
   }
-  else return -1;
+  
+  else
+  {
+    strip.clear();
+    return -1;
+  }
 }
