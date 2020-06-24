@@ -5,5 +5,7 @@
     "files.associations": {
         "*.ino": "cpp"
     },
-    "particle.targetDevice": "hanzo-photon-c"
+    "particle.targetDevice": "hanzo-photon-c",
+    "particle.firmwareVersion": "1.5.2",
+    "particle.targetPlatform": "photon"
 }
