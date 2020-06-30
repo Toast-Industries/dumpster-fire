@@ -1,6 +1,6 @@
 # dumpster-fire
 
-A Particle project named dumpster-fire
+The IoT Dumpster Fire 2020 Needs.
 
 ## How To Make
 Files are incomplete. Will be adding STLs soon (need to tweak a few things).
