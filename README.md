@@ -2,6 +2,8 @@
 
 The IoT Dumpster Fire 2020 Needs.
 
+
+<img src="df1.JPEG" width="320"> <img src="df2.JPEG" width="320"> <img src="df3.JPEG" width="320">
 ## How To Make
 Files are incomplete. Will be adding STLs soon (need to tweak a few things).
 Files needed to make the PCB (which isn't necessary) are included, recommend using the gerber files with Oshpark.
